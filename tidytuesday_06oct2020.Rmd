@@ -1,7 +1,7 @@
 ---
 title: "Tidy Tuesday"
 subtitle: "Pretty Data Viz with ggplot and plotly"
-author: "Kate Culhane"
+author: "Kate Culhane & Caroline Owens"
 date: "06 Oct 2020"
 output:
   html_document:
@@ -20,11 +20,6 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
 ```
 
 <br>
-
-*Check in beforehand:*
-
-- Can everyone practice giving a thumbs up on Zoom?
-- Is this color scheme okay or should I switch to light mode?
 
 *Heads up about the way I code:*
 
@@ -48,7 +43,6 @@ library(plotly) # making interactive graphs
 library(htmlwidgets) # Exporting graphs as HTML
 
 # Load data
-library(palmerpenguins)
 penguins <- read_csv("penguins.csv")
 
 ```
@@ -118,11 +112,15 @@ Tips:
 
 ```{r}
 
-# Make the plot pretty
+# Make the plot pretty!
 
 # Save a vector of colors for use in future graphs
 col_scale <- c("#A3E7FC", "#32908F", "#26C485") # c() combines values into a vector
 names(col_scale) <- c("Adelie", "Gentoo", "Chinstrap") # naming each value to correspond to the species
+
+# Save a vector of names for use in the legend
+lab_scale <- c("P. adeliae", "P. papua", "P. antarcticus")
+names(lab_scale) <- c("Adelie", "Gentoo", "Chinstrap")
 
 # New pretty graph
 p <- penguins %>% 
@@ -136,7 +134,7 @@ p <- penguins %>%
   # scale_color_manual(values = "red", "yellow", "green")) + # DOESN'T WORK
   # scale_color_manual(values = c("lightskyblue", "slateblue4", "darkslategray4")) + 
   scale_color_manual(values = col_scale,
-                     labels = c("P. adeliae", "P. antarcticus", "P. papua"), # order matters (unless you use a named vector!)
+                     labels = lab_scale, # order matters (unless you use a named vector!)
                      name = "Species") +
   # scale_shape_manual(values = c("\u2600", "\u2601")) + # using unicode values
   # scale_shape_manual(values = c("\u2640", "\u2642")) +
@@ -190,6 +188,7 @@ theme_update(panel.grid.minor = element_line(colour = "red", size = 3),
              plot.background = element_rect(fill = "yellow"),
              title = element_text(size = 60, face = "italic", color = "tan"),
              axis.text = element_text(color = "purple", face = "bold", angle = 160))
+
 
 ggplot(cars, aes(x = speed, y = dist)) + geom_point()
 
@@ -272,7 +271,6 @@ ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000, # adjust un
              color = "grey30") + # changes OUTSIDE color of the point
   scale_fill_manual(values = col_scale, # use scale_fill_* because we used "fill" in the aes
                     name = "Species") +
-  theme_classic() + # built-in theme
   labs(x = "Flipper length (cm)", # match units!
        y = "Body mass (kg)", # match units!
        title = "Flippin' Palmer Penguins")
@@ -288,7 +286,7 @@ ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000, # adjust un
 # Updated static plot
 p2 <- ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000,
                            fill = species,
-                           text = paste("sex:", sex))) + # text to use for tooltip
+                           cooltip = sex)) + # text to use for tooltip
   geom_point(na.rm = TRUE,
              size = 2, shape = 21, color = "grey30") +
   scale_fill_manual(values = col_scale,
@@ -300,7 +298,7 @@ p2 <- ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000,
 
 # Interactive plot
 ggplotly(p2,
-         tooltip = c("species", "text")) # changes tooltip text
+         tooltip = "cooltip") # changes tooltip text
 
 ```
 
@@ -313,7 +311,7 @@ ggplotly(p2,
 # Updated static plot
 p3 <- ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000,
                            fill = species,
-                           text = paste("sex:", sex),
+                           cooltip = sex,
                            frame = year)) + # adds animation, with one frame per year
   geom_point(na.rm = TRUE,
              size = 2, shape = 21, color = "grey30") +
@@ -326,7 +324,7 @@ p3 <- ggplot(penguins, aes(x = flipper_length_mm/10, y = body_mass_g/1000,
 
 # Interactive plot
 p3_move <- ggplotly(p3,
-                    tooltip = c("species", "text"))
+                    tooltip = "cooltip")
 
 p3_move
 
